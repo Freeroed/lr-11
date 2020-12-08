@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity, Text, Image, FlatList } from "react-native";
+import { View, TouchableOpacity, Text, Image } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 
 const exampleData = [
@@ -25,22 +25,17 @@ class Example extends Component {
         data: exampleData
     };
 
-    removeItem = (item) => {
-        this.setState({
-            data: this.state.data.filter(book => item.key !== book.key)
-        })
-    }
-    renderItem = ({ item, index }) => {
+    renderItem = ({ item, index, drag, isActive }) => {
         return (
             <TouchableOpacity
                 style={{
                     height: 100,
-                    backgroundColor: "gray",
+                    backgroundColor: isActive ? "blue" : "gray",
                     alignItems: "center",
                     justifyContent: "center",
                     flexDirection: 'row', flexWrap: 'wrap'
                 }}
-                onLongPress={() => this.removeItem(item)}
+                onLongPress={drag}
             >
                 <Image style={{
                     width: 100,
@@ -72,9 +67,11 @@ class Example extends Component {
                 alignItems: 'center',
                 backgroundColor: '#F5FCFF',
             }}>
-                <FlatList
+                <DraggableFlatList
                     data={this.state.data}
                     renderItem={this.renderItem}
+                    keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                    onDragEnd={({ data }) => this.setState({ data })}
                 />
             </View>
         );
